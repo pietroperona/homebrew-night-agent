@@ -15,11 +15,21 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
+      - name: Tap this repo
+        run: |
+          brew tap pietroperona/night-agent "https://github.com/pietroperona/homebrew-night-agent" || true
+          brew tap-info pietroperona/night-agent
+
+      - name: Force update tap to local checkout
+        run: |
+          TAP_DIR=$(brew --repository pietroperona/night-agent)
+          cp "$GITHUB_WORKSPACE/Formula/night-agent.rb" "$TAP_DIR/Formula/night-agent.rb"
+
       - name: Audit formula
-        run: brew audit --formula "$GITHUB_WORKSPACE/Formula/night-agent.rb" || true
+        run: brew audit --formula pietroperona/night-agent/night-agent || true
 
       - name: Install formula
-        run: brew install --build-from-source "$GITHUB_WORKSPACE/Formula/night-agent.rb"
+        run: brew install --build-from-source pietroperona/night-agent/night-agent
 
       - name: Run formula tests
-        run: brew test night-agent
+        run: brew test pietroperona/night-agent/night-agent
