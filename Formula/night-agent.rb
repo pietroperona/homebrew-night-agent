@@ -1,8 +1,8 @@
 class NightAgent < Formula
   desc "Runtime security layer for AI agents on macOS"
   homepage "https://github.com/pietroperona/night-agent"
-  url "https://github.com/pietroperona/night-agent/archive/refs/tags/v0.2.2.tar.gz"
-  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+  url "https://github.com/pietroperona/night-agent/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "3ea06ac959fbb39df499e85e7d29748ccc877fc43df3ad0c85b63daa88901865"
   license "MIT"
   head "https://github.com/pietroperona/night-agent.git", branch: "main"
 
@@ -11,7 +11,7 @@ class NightAgent < Formula
 
   def install
     # Compila il binario principale Go
-    system "go", "build", "-o", bin/"night-agent", "./cmd/guardian"
+    system "go", "build", "-o", bin/"nightagent", "./cmd/guardian"
 
     # Compila lo shim C (intercettazione comandi via PATH)
     system "clang", "-o", libexec/"guardian-shim",
@@ -48,29 +48,21 @@ class NightAgent < Formula
 
   def caveats
     <<~EOS
-      Night Agent è stato installato. Per completare la configurazione:
+      Night Agent installato. Per completare la configurazione:
 
-      1. Inizializza Night Agent:
-           night-agent init
+        nightagent init
 
-      2. Per le funzionalità sandbox, installa Docker Desktop:
-           https://www.docker.com/products/docker-desktop/
-         Avvialo almeno una volta manualmente dopo l'installazione.
-
-      3. Riavvia il terminale o esegui:
-           source ~/.zshrc
+      Per le funzionalità sandbox installa Docker Desktop:
+        https://www.docker.com/products/docker-desktop/
 
       Per verificare che tutto funzioni:
-           night-agent doctor
+        nightagent doctor
     EOS
   end
 
   test do
-    # Test che il binario risponde correttamente
-    output = shell_output("#{bin}/night-agent --help")
-    assert_match "night-agent", output
-
-    # Test che la policy di default è accessibile
+    output = shell_output("#{bin}/nightagent --help")
+    assert_match "nightagent", output
     assert_predicate pkgshare / "configs" / "default_policy.yaml", :exist?
   end
 end
