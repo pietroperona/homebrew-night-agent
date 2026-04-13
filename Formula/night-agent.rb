@@ -10,17 +10,14 @@ class NightAgent < Formula
   depends_on :macos
 
   def install
-    # Compila il binario principale Go
     system "go", "build", "-o", bin/"nightagent", "./cmd/guardian"
 
-    # Compila shim C nella dir corrente, poi installa (libexec.install crea la dir)
     system "clang", "-o", "guardian-shim",
            "internal/shim/csrc/guardian_shim.c",
            "-Wall", "-Wextra", "-Wno-unused-parameter"
     libexec.install "guardian-shim"
     (libexec/"shims").mkpath
 
-    # Compila dylib nella dir corrente, poi installa
     system "clang", "-dynamiclib",
            "-o", "guardian-intercept.dylib",
            "internal/intercept/csrc/guardian_intercept.c",
@@ -29,7 +26,6 @@ class NightAgent < Formula
            "-compatibility_version", "1.0"
     lib.install "guardian-intercept.dylib"
 
-    # Installa la policy di default
     pkgshare.install "configs"
   end
 
@@ -38,11 +34,14 @@ class NightAgent < Formula
     policy_dest = guardian_dir / "policy.yaml"
     policy_src = pkgshare / "configs" / "default_policy.yaml"
 
-    unless policy_dest.exist?
-      guardian_dir.mkpath
-      FileUtils.cp policy_src, policy_dest
-      policy_dest.chmod(0600)
-    end
+    return if policy_dest.exist?
+
+    guardian_dir.mkpath
+    FileUtils.cp policy_src, policy_dest
+    policy_dest.chmod(0600)
+  rescue => e
+    opoo "Impossibile copiare la policy di default: #{e.message}"
+    opoo "Esegui 'nightagent init' per completare la configurazione."
   end
 
   def caveats
