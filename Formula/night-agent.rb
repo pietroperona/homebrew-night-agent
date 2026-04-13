@@ -1,8 +1,8 @@
 class NightAgent < Formula
   desc "Runtime security layer for AI agents on macOS"
   homepage "https://github.com/pietroperona/night-agent"
-  url "https://github.com/pietroperona/night-agent/archive/refs/tags/v0.3.0.tar.gz"
-  sha256 "3ea06ac959fbb39df499e85e7d29748ccc877fc43df3ad0c85b63daa88901865"
+  url "https://github.com/pietroperona/night-agent/archive/refs/tags/v0.3.1.tar.gz"
+  sha256 "04ca20157d69ca80d2693714185d1ff159226e62092d0cb824d2351ef6b2281f"
   license "MIT"
   head "https://github.com/pietroperona/night-agent.git", branch: "main"
 
