@@ -10,6 +10,10 @@ class NightAgent < Formula
   depends_on :macos
 
   def install
+    # Crea directory necessarie prima della compilazione
+    libexec.mkpath
+    (libexec/"shims").mkpath
+
     # Compila il binario principale Go
     system "go", "build", "-o", bin/"nightagent", "./cmd/guardian"
 
@@ -28,13 +32,9 @@ class NightAgent < Formula
 
     # Installa la policy di default
     pkgshare.install "configs"
-
-    # Crea symlink per lo shim nella libexec
-    (libexec/"shims").mkpath
   end
 
   def post_install
-    # Copia la policy di default se non esiste già
     guardian_dir = Pathname.new(ENV["HOME"]) / ".night-agent"
     policy_dest = guardian_dir / "policy.yaml"
     policy_src = pkgshare / "configs" / "default_policy.yaml"
