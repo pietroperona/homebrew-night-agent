@@ -15,14 +15,11 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      - name: Tap this repo
-        run: brew tap pietroperona/night-agent "$GITHUB_WORKSPACE"
-
       - name: Audit formula
-        run: brew audit --new-formula night-agent || true
+        run: brew audit --formula "$GITHUB_WORKSPACE/Formula/night-agent.rb" || true
 
       - name: Install formula
-        run: brew install --build-from-source night-agent
+        run: brew install --build-from-source "$GITHUB_WORKSPACE/Formula/night-agent.rb"
 
       - name: Run formula tests
         run: brew test night-agent
