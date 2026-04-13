@@ -10,25 +10,24 @@ class NightAgent < Formula
   depends_on :macos
 
   def install
-    # Crea directory necessarie prima della compilazione
-    libexec.mkpath
-    (libexec/"shims").mkpath
-
     # Compila il binario principale Go
     system "go", "build", "-o", bin/"nightagent", "./cmd/guardian"
 
-    # Compila lo shim C (intercettazione comandi via PATH)
-    system "clang", "-o", libexec/"guardian-shim",
+    # Compila shim C nella dir corrente, poi installa (libexec.install crea la dir)
+    system "clang", "-o", "guardian-shim",
            "internal/shim/csrc/guardian_shim.c",
            "-Wall", "-Wextra", "-Wno-unused-parameter"
+    libexec.install "guardian-shim"
+    (libexec/"shims").mkpath
 
-    # Compila la dylib DYLD_INSERT_LIBRARIES (opzionale, per intercettazione avanzata)
+    # Compila dylib nella dir corrente, poi installa
     system "clang", "-dynamiclib",
-           "-o", lib/"guardian-intercept.dylib",
+           "-o", "guardian-intercept.dylib",
            "internal/intercept/csrc/guardian_intercept.c",
            "-Wall", "-Wextra", "-Wno-unused-parameter",
            "-current_version", "1.0",
            "-compatibility_version", "1.0"
+    lib.install "guardian-intercept.dylib"
 
     # Installa la policy di default
     pkgshare.install "configs"
